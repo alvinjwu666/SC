@@ -435,6 +435,11 @@ class Game{
             camera = make_pair(0.0, 0.0);
             for(int a = 0; a < 15; a ++) updatePaths(a);
         }
+        void update(){
+            for(Thing *t: stuff){
+                updateU(*t);
+            }
+        }
 
     private:
         void updateU(Thing u){
