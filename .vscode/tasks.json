@@ -1,0 +1,38 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "build",
+			"command": "g++",
+			"args": [
+				"-g",
+				"D:\\Prog 2\\SC2\\sc.cpp",
+				"-o",
+				"D:\\Prog 2\\SC2\\sc.exe",
+				"-ID:\\Personal\\SFML\\include",
+				"-LD:\\Personal\\SFML\\lib",
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+				"-lsfml-network"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "C:\\MinGW\\bin\\g++.exe"
+		},
+		{
+			"type": "shell",
+			"command": ".\\sc.exe",
+			"label": "run",
+		}
+	]
+}
