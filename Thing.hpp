@@ -59,6 +59,7 @@ class Thing{
         static const int tagn = 10, statusn = 8;
         static const thingstat stats[];
         static const dmg damages[5];
+        const bool isUnit = false;
         double s;
         pair <double, double> v;
         double px, py;
@@ -66,6 +67,7 @@ class Thing{
         int health;
         int erg, dur;//energy and duration
         int state, curact;//current stat type etc, and the current action like walking, shooting, etc
+        //curact: 0 idle, 1 move, 2 chase, 3 fire
         int btype;//big type: 0 struct, 1 ground, 2 air
         //list<fakeAction> alis;//actions linked list
         vector<int> dtypes;//damage types, index of the damage which is to be in the array
@@ -74,7 +76,8 @@ class Thing{
         bool seen;
         bool cloak, isfriend, canselect;
         int type;
-        virtual void draw(sf::RenderWindow &w, pair<double, double> p){cout << "\ncalled";}
+        Thing *targ;//shoots this
+        virtual void draw(sf::RenderWindow &w, pair<double, double> p);
 
         void statusact(){
             for(int i = 0; i < statusn; i ++){
@@ -133,6 +136,7 @@ double distp(pair<double, double> p){
 
 class Unit: public Thing{
     public:
+        const bool isUnit = true;
         list<actio> alis;
         void assignMove(list<actio> a){
             alis = a;
@@ -140,24 +144,26 @@ class Unit: public Thing{
         void queueMove(list<actio> a){
             alis.splice(alis.end(), a);
         }
-        void update(){
+        void update(unordered_set<Thing*> se){
             if(!alis.empty()){
-                actio fir = alis.front();
-                if(fir.type == 0){
-                    fakeAction f = fir.ac.front();
-                    if(s == 0) v = make_pair(f.px - px, f.py - py);
-                    if(sqrt(pow(px - f.px, 2) + pow(py - f.py, 2)) > f.dist){
-                        if(s < stats[state].top){
-                            s += stats[state].acc / FRAME;
-                            if(s > stats[state].top) s = stats[state].top;
-                        }
-                        curact = 1;
+                actio ac = alis.front();
+                if(!ac.ac.empty()){
+                    fakeAction fa = ac.ac.front();
+                    if(s < stats[state].top){
+                        s += stats[state].acc / FRAME;
                     }
-                    regularize(&v, 1);
-                    pair<double, double> temp = make_pair(f.px - px, f.py - py);
-                    regularize(&temp, 0.3);
-                    v = v + temp;
+                    curact = 1;
+
                 }
+            }
+
+            if(curact == 1){
+                if(s < stats[state].top){
+                    s += stats[state].acc / FRAME;
+                }
+                regularize(&v, s / FRAME);
+                px += v.first;
+                py += v.second;
             }
         }
 };
@@ -196,7 +202,6 @@ class Marine: public Ground{
             isfriend = te;
         };
         void draw(sf::RenderWindow &w, pair<double, double> p){
-            cout <<"\nthis called\n";
             drawig(w, px * 60 - p.first, py * 60 - p.second, isfriend);
         }
     private:
@@ -206,7 +211,6 @@ class Marine: public Ground{
             else c.setFillColor(sf::Color::Red);
             c.setPosition(px - 22.5, py - 22.5);
             w.draw(c);
-            cout << "Marine called";
         }
 };
 

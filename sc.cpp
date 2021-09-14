@@ -101,9 +101,7 @@ void update(){
     stx = (int) g.camera.first / 60;
     sty = (int) g.camera.second / 60;
 
-    for(auto t: g.stuff){
-        g.update();
-    }
+    g.update();
 };
 
 

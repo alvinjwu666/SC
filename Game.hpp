@@ -443,45 +443,11 @@ class Game{
 
     private:
         void updateU(Thing u){
-            u.update();
-            if(u.curact == 1){
-                if(u.stats[u.state].collide){
-                    for(int a = (int) u.px - 1; a <= (int) u.px + 1; a ++){
-                        for(int b = (int) u.py - 1; b <= (int) u.py + 1; b ++){
-                            if(terrain[a][b] < 0){
-                                double distance = pow(a - u.px + 0.5, 2) + pow(b - u.py + 0.5, 2) * 3;
-                                u.v.first -= ((a - u.px + 0.5) / distance);
-                                u.v.second -= ((b - u.py + 0.5) / distance);
-                            }
-                        }
-                    }
-                    pair<double, double> temp, tempv, dv = make_pair(0, 0);
-                    double vcur = magsq(u.v);
-                    for(auto other: stuff){
-                        if(other != &u && other->stats[other->state].collide){
-                            if(pow(other->px - u.px, 2) + pow(other->py - u.py, 2) < 25){
-                                temp = make_pair(other->px - u.px, other->py - u.py);
-                                if(other->btype != 0){
-                                    tempv = other->v - u.v;
-                                    double tempd = dot(tempv, temp);
-                                    if(pow(tempd, 2) > magsq(temp) * magsq(tempv) / 4){
-                                        regularize(&temp, 0.1 / magsq(temp));
-                                        dv = dv - temp;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    u.v = u.v + dv;
-                    regularize(&u.v, u.s / FRAME);
-                    u.px += u.v.first;
-                    u.py += u.v.second;
-                    //for(auto a = )
+            if(u.isUnit){
+                Unit up = (Unit) u;
+                if(!up.alis.empty()){
+                    
                 }
-                regularize(&u.v, u.s / FRAME);
-                u.px += u.v.first;
-                u.py += u.v.second;
             }
-            
         }
 };
